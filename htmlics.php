@@ -1,7 +1,7 @@
 <?php
 /*
     HTMLics Band-Aid - Simple manual HTML writing helper "macros" for PHP
-	v0.1
+	v0.1.1
 	Copyright (C) 2018, Szabolcs Szasz.
 	License: CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/legalcode
 
@@ -269,8 +269,8 @@ function H2(...$content)	{ return _tag_with_opt_attrs("h2", ...$content) . DEBUG
 function H3(...$content)	{ return _tag_with_opt_attrs("h3", ...$content) . DEBUG_PRETTY_NL; ; }
 function H4(...$content)	{ return _tag_with_opt_attrs("h4", ...$content) . DEBUG_PRETTY_NL; ; }
 
-function PRE(...$content)	{ return _tag_with_opt_attrs("pre", ...$content); }
-function CODE(...$content)	{ return _tag_with_opt_attrs("code", ...$content); }
+function PRE(...$content)	{ return _sloppy_tag_with_opt_attrs("pre", ...$content); }
+function CODE(...$content)	{ return _sloppy_tag_with_opt_attrs("code", ...$content); }
 function UL(...$content)	{ return _tag_with_opt_attrs("ul", ...$content) . DEBUG_PRETTY_NL; ; }
 function OL(...$content)	{ return _tag_with_opt_attrs("ol", ...$content) . DEBUG_PRETTY_NL; ; }
 function LI(...$content)	{ return _sloppy_tag_with_opt_attrs("li", ...$content); }
