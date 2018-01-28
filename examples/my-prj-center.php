@@ -67,7 +67,7 @@ BODY(),//[onload => "alert('no shit')"]),
 ):""),
 
 DIV(
-H1("Lunatek Project Central"),
+H1("Example Project Central"),
 UL(indent, // Or just a DD() + no .undent for H3, if noone's looking! ;-p
   H3(undent, "Local project tree... "),
     LI( A(example_com, 'full project tree (tag: "ALL")'), REM("via FlexBrowser") ),
