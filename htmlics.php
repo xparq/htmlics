@@ -1,7 +1,7 @@
 <?php
 /*
-    HTMLics Band-Aid - Simple manual HTML writing helper "macros" for PHP
-	v0.1.2
+    HTMLics Band-Aid Construction Kit - Simple manual HTML-writing helper "macros" for PHP
+	v0.1.4
 	Copyright (C) 2018, Szabolcs Szasz.
 	License: CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/legalcode
 
@@ -14,6 +14,13 @@
       * Sparing most of the dreadfully annoying-to-type "insect" chars (<="'&;/>).
         And especially close tags, needless to say.
 
+      * Clutterless tag/attrib. shorthand names for simple stuff like BR, HR etc.
+
+      * `load($file)` to include stuff as-is.
+
+      ! `php_include($script)` to wrap PHP's `include` statement into a real
+         function, returning the output of $script (not bool, as the original).
+
       ! Element sequences in the PHP source can be separated with both dots and
         commas (like with echo).
         That's quite a cool feature of this thing: you can freely copy-paste
@@ -25,7 +32,7 @@
       ! Another coolness is the `combine(...$itemlist)` function that makes it
         possible to conditionally enable/disable parts of a long echo list! :-o
         (See the `..., (DEBUG ? combine(DIV(...), ...) : "")` part in the
-        luantek-project-central example!)
+        project-central example!)
 
       * Straightforward way to add attributes to elements (via a [name => val]
         array as the first argument) where needed -- and allowed.
@@ -33,8 +40,6 @@
         useful, especially with repeated attrib lists, defined as consts. Also,
         while kept in arrays, those attributes can be trivially added, removed,
         changed by transformations before outputting.
-
-      * Clutterless tag/attrib. shorthand names for simple stuff like BR, HR etc.
 
       * Full control over the output. (Well, it's your echo, anyway. ;) )
 
@@ -221,6 +226,12 @@ function _sloppy_tag_with_opt_attrs($tag, ...$content) {
 // API
 //======================================================================
 
+// Make PHP's include a function returning the output of the script:
+function php_include($name) { ob_start(); include $name; return ob_get_clean(); }
+
+function load($name) { return file_get_contents($name); }
+
+// HTML construction
 function DOCTYPE($doctype = "html") { return ($doctype ? void_tag("!DOCTYPE", [$doctype=>""]) : "")
 						. DEBUG_PRETTY_NL; }
 
