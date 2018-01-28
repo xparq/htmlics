@@ -1,7 +1,7 @@
 <?php
 /*
     HTMLics Band-Aid - Simple manual HTML writing helper "macros" for PHP
-	v0.1.1
+	v0.1.2
 	Copyright (C) 2018, Szabolcs Szasz.
 	License: CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/legalcode
 
@@ -14,9 +14,9 @@
       * Sparing most of the dreadfully annoying-to-type "insect" chars (<="'&;/>).
         And especially close tags, needless to say.
 
-      ! Child elements of a parent can be separated both with dots and commas
-        (like with echo).
-        That's a cool feature of this thing: you can freely copy-paste
+      ! Element sequences in the PHP source can be separated with both dots and
+        commas (like with echo).
+        That's quite a cool feature of this thing: you can freely copy-paste
         from/to any typical PHP code emitting or constructing HTML fragments,
         be it a long `echo` list or a chain of concatenations, and you can e.g.
         add that code, unchanged, to a parent tag via the same HTMLics tag "macro",
@@ -44,11 +44,18 @@
         (This just delegates the nested parenthesis-typing burden to browsers,
         with their ubiquitous heuristics for tolerating crappy HTML...)
 
+    Other interesting points:
+
       * PHP Notice "undefined const x, assuming 'x'" explicitly intercepted for
         hard-core quote-sparing... ;) (E.g. you can type attr. names or most CSS
-        classes unquoted. Hallelujah!)
+        class names unquoted. Hallelujah!)
 
       * No external dependencies. Just this one file, and you.
+
+      * FP-like implementation: almost every function is "pure", consisting
+        of one single `return` statement, with no variables, no assignments
+        ("side effects") etc. (I have no idea if it's useful or not, but there
+        you have it. ;) )
 
       * Easily extendable (not all the HTML elements are added by default, but
         you can immediately see how it's done, and add yours).
@@ -78,7 +85,6 @@
 TODO:
 - META stuff for HEAD (analogously to the attribs for elems.)
 - CSS, JS (indclusion) helpers
-- Other notices (like array -> string conv) are also errno 8?! Those should be enabled!
 
 */
 
@@ -148,17 +154,17 @@ function attrs_to_html($attrs) {
 	$res = "";
 	foreach ($attrs as $n => $v) {
 		$res .=
-		(!$n ? ""
-		// attr may have no "=value" part!
-		: " $n" . (!$v ? ""
-			: "=\"$v\"")
-		);
+			!$n ? ""
+			    // attr may have no "=value" part:
+			    : " $n" . (!$v ? "" : "=\"$v\"")
+		;
 	}
 	return $res;
 }
 
 
 // "DOM" logic...
+// (Kinda' part of the API, too...)
 
 // This one just returns its imputs combined
 function combine(...$content) {
@@ -189,16 +195,14 @@ function void_tag($tag, $attrs = [])	{ return "<$tag" . attrs_to_html($attrs) . 
 function sc_tag($tag, $attrs = [])	{ return "<$tag" . attrs_to_html($attrs) . "/>"; }
 
 
-
 // Internal fixtures...
 
 function _unpack_opt_attrs($f, ...$args) {
-	$attrs = (isset($args[0]) and is_array($args[0]))
-			? array_shift($args)
-			: []
-		;
-
-	return $f($attrs, ...$args);
+	return $f( (isset($args[0]) and is_array($args[0]))
+					? array_shift($args)
+					: [],
+		 ...$args
+	);
 }
 
 function _tag_with_opt_attrs($tag, ...$content) {
@@ -283,13 +287,16 @@ set_error_handler(
 	function(int $errno, string $errstr, string $errfile = null, int $errline = null, array $errcontext = null) {
 		switch ($errno) {
 		case 8: // undef. const/
-			if (HTMLICS_DEBUG and HTMLICS_DEBUG_SHOWNOTICES) {
-			echo SPAN(['style'=>"border:1px solid gray; color: gray; padding: 0 3;"],
-				SMALL(['class'=>"warning"], "PHP Notice: \"$errstr\"")
-			);
+			if (preg_match("/undefined constant.*assumed/", $errstr)) {
+				if (HTMLICS_DEBUG and HTMLICS_DEBUG_SHOWNOTICES) {
+					echo SPAN(['style'=>"border:1px solid gray; color: gray; padding: 0 3;"],
+						SMALL(['class'=>"warning"], "PHP Notice: \"$errstr\"")
+					);
+				}
+				return true; // skip the default handler
 			}
 		}
-		return true; // skip the default handler
+		return false; // proceed to the default handler
 	},
 	E_NOTICE
 );
