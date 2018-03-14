@@ -2,12 +2,12 @@
 /*
     HTMLics Band-Aid Construction Kit - Simple manual HTML-writing helper "macros" for PHP
 	v0.1.4
-	Copyright (C) 2018, Szabolcs Szasz.
+	Copyright (C) 2018, Kiro Sabiano
 	License: CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/legalcode
 
     Of course you shouldn't, but if you somehow still find yourself writing HTML
     code directly from PHP, and a working template toolkit is out of reach, or
-    it's just overkill for the task, then this is probaby the best trade-off
+    it's just overkill for the task, then this is probably the best trade-off
     between effortless & readable code, simple & light-weight (parserless) runtime,
     and useful, common, simple HTML crafting features, like:
 
