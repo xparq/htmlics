@@ -1,8 +1,8 @@
 <?php
 /*
     HTMLics Band-Aid Construction Kit - Simple manual HTML-writing helper "macros" for PHP
-	v0.1.4
-	Copyright (C) 2018, Kiro Sabiano
+	v0.1.5
+	Copyright (C) 2018, Sabi Ludens
 	License: CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/legalcode
 
     Of course you shouldn't, but if you somehow still find yourself writing HTML
@@ -122,7 +122,6 @@ const PIPE = "|";
 // And so on... (I might add a few more later.)
 
 
-
 // Debug internal follow-ups as soon as possible:
 	if (HTMLICS_DEBUG) assert_options(ASSERT_BAIL, 1);
 	const DEBUG_PRETTY_NL = (HTMLICS_DEBUG ? NL : "");
@@ -151,6 +150,21 @@ const _onload = "onload";
 const BR = "<br />" . DEBUG_PRETTY_NL;
 const HR = "<hr />" . DEBUG_PRETTY_NL;
 
+
+//======================================================================
+// USER Hooks...
+//======================================================================
+function _call_hook_url_fixup($url) {
+// This is unsolvable without extra information for defaults, so if anything
+// needs to be done, must be done by the application.
+// (Also, note: URLs like "example.com" can't be distinguished from "file.ext",
+// so e.g. adding missing scheme to bare domains can't be fully automatic!)
+
+	return function_exists("htmlics_hook_url_fixup")
+                          ? htmlics_hook_url_fixup($url) : $url;
+}
+
+
 //======================================================================
 // API Utils...
 //======================================================================
@@ -166,7 +180,6 @@ function attrs_to_html($attrs) {
 	}
 	return $res;
 }
-
 
 // "DOM" logic...
 // (Kinda' part of the API, too...)
@@ -223,7 +236,7 @@ function _sloppy_tag_with_opt_attrs($tag, ...$content) {
 
 
 //======================================================================
-// API
+// API...
 //======================================================================
 
 // Make PHP's include a function returning the output of the script:
@@ -259,16 +272,19 @@ function HTML(...$content)	{
 function HEAD(...$content)	{ return sloppy_tag("head", [], ...$content) . DEBUG_PRETTY_NL; }
 function STYLE(...$css)		{ return _tag_with_opt_attrs("style", ...$css) . DEBUG_PRETTY_NL; }
 function BODY(...$content)	{ return _sloppy_tag_with_opt_attrs("body", ...$content); }
-function P(...$content)		{ return _sloppy_tag_with_opt_attrs("p", ...$content) . DEBUG_PRETTY_NL; }
-function SPAN(...$content)	{ return _tag_with_opt_attrs("span", ...$content); }
 function DIV(...$content)	{ return _tag_with_opt_attrs("div", ...$content); }
+function SPAN(...$content)	{ return _tag_with_opt_attrs("span", ...$content); }
+function P(...$content)		{ return _sloppy_tag_with_opt_attrs("p", ...$content) . DEBUG_PRETTY_NL; }
+
 function A($url, ...$label)	{ return _unpack_opt_attrs( function($attrs, ...$label) use($url) {
-						$attrs['href'] = $url;
+						if (!$label) $label = [$url];
+						$attrs['href'] = _call_hook_url_fixup($url); // let the app process URLs!
 						return tag("a", $attrs, ...$label);
 					},
 					...$label);
-					//! htmlspecialchars($label) on the user side, as applicable!
 				}
+function Ah($url, ...$label)	{ if (!$label) $label = [$url]; return A("http://$url", ...$label); }
+function Ahs($url, ...$label)	{ if (!$label) $label = [$url]; return A("https://$url", ...$label); }
 
 function I(...$content)	{ return tag("i", [], ...$content); }
 function B(...$content)	{ return tag("b", [], ...$content); }
@@ -293,6 +309,13 @@ function LI(...$content)	{ return _sloppy_tag_with_opt_attrs("li", ...$content);
 function DL(...$content)	{ return _tag_with_opt_attrs("dl", ...$content) . DEBUG_PRETTY_NL; ; }
 function DT(...$content)	{ return _sloppy_tag_with_opt_attrs("dt", ...$content); }
 function DD(...$content)	{ return _sloppy_tag_with_opt_attrs("dd", ...$content); }
+
+function TABLE(...$content)	{ return _tag_with_opt_attrs("table", ...$content) . DEBUG_PRETTY_NL; ; }
+function TR(...$content)	{ return _tag_with_opt_attrs("tr", ...$content) . DEBUG_PRETTY_NL; ; }
+function TH(...$content)	{ return _tag_with_opt_attrs("th", ...$content); }
+function TD(...$content)	{ return _tag_with_opt_attrs("td", ...$content); }
+function COLGROUP(...$content){ return _tag_with_opt_attrs("colgroup", ...$content); }
+function COL(...$content)	{ return _sloppy_tag_with_opt_attrs("col", ...$content); }
 
 set_error_handler(
 	function(int $errno, string $errstr, string $errfile = null, int $errline = null, array $errcontext = null) {
