@@ -8,7 +8,7 @@
     Of course you shouldn't, but if you somehow still find yourself writing HTML
     code directly from PHP, and a working template toolkit is out of reach, or
     it's just overkill for the task, then this is probably the best trade-off
-    between effortless & readable code, simple & light-weight (parserless) runtime,
+    between effortless & readable code, simple & lightweight (parserless) runtime,
     and useful, common, simple HTML crafting features, like:
 
       * Sparing most of the dreadfully annoying-to-type "insect" chars (<="'&;/>).
@@ -83,13 +83,13 @@
 
       * This script is meant to be used in trivial environments, not as the core
         HTML renderer of some production code! No effort has been made to bullet-
-        proofing, pref. optimization, namespace- or composer-friendliness etc.
+        proofing, perf. optimization, namespace- or composer-friendliness etc.
         You are on your own. (Well, it's web development; how much worse can
         it get, anyway?)
 
 TODO:
 - META stuff for HEAD (analogously to the attribs for elems.)
-- CSS, JS (indclusion) helpers
+- CSS, JS (inclusion) helpers
 
 */
 
