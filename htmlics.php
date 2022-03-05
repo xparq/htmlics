@@ -2,7 +2,7 @@
 /*
     HTMLics Band-Aid Construction Kit - Simple manual HTML-writing helper "macros" for PHP
 	v0.1.5
-	Copyright (C) 2018, Sabi Ludens
+	Copyright (C) 2018, Szabi Ludens
 	License: CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/legalcode
 
     Of course you shouldn't, but if you somehow still find yourself writing HTML
@@ -155,10 +155,12 @@ const HR = "<hr />" . DEBUG_PRETTY_NL;
 // USER Hooks...
 //======================================================================
 function _call_hook_url_fixup($url) {
-// This is unsolvable without extra information for defaults, so if anything
-// needs to be done, must be done by the application.
-// (Also, note: URLs like "example.com" can't be distinguished from "file.ext",
-// so e.g. adding missing scheme to bare domains can't be fully automatic!)
+// Auto-translating convenient app-specific links to actual, well-formed 
+// URLs may be impossible here (in a generic HTML context), so if any sort
+// of processing is needed, that should be done by the application.
+// (E.g. URL types like "example.com" and "example.ext" can't be distinguished,
+// so even the innocent-looking "add missing scheme to domains" is already
+// something that can't be reliably automated here.)
 
 	return function_exists("htmlics_hook_url_fixup")
                           ? htmlics_hook_url_fixup($url) : $url;
@@ -314,7 +316,7 @@ function TABLE(...$content)	{ return _tag_with_opt_attrs("table", ...$content) .
 function TR(...$content)	{ return _tag_with_opt_attrs("tr", ...$content) . DEBUG_PRETTY_NL; ; }
 function TH(...$content)	{ return _tag_with_opt_attrs("th", ...$content); }
 function TD(...$content)	{ return _tag_with_opt_attrs("td", ...$content); }
-function COLGROUP(...$content){ return _tag_with_opt_attrs("colgroup", ...$content); }
+function COLGROUP(...$content)	{ return _tag_with_opt_attrs("colgroup", ...$content); }
 function COL(...$content)	{ return _sloppy_tag_with_opt_attrs("col", ...$content); }
 
 set_error_handler(
